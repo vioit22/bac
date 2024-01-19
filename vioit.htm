@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Windows Server 2022 : IIS : Use Default Web Site : Server World</title>
+<meta name="description" content="Windows Server 2022 IIS Use Default Web Site">
+<link href="./css/base.css?20210713" media="screen" rel="stylesheet" type="text/css">
+<link href="./css/navi.css?20201121" media="screen" rel="stylesheet" type="text/css">
+<link href="./css/main.css?20230608" media="screen" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="./command/popup.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZE66RTNTHG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-ZE66RTNTHG');
+</script>
+<!-- Quantcast Choice. Consent Manager Tag v2.0 (for TCF 2.0) -->
+<script type="text/javascript" async=true>
+(function() {
+  var host = 'www.themoneytizer.com';
+  var element = document.createElement('script');
+  var firstScript = document.getElementsByTagName('script')[0];
+  var url = 'https://cmp.quantcast.com'
+    .concat('/choice/', '6Fv0cGNfc_bw8', '/', host, '/choice.js');
+  var uspTries = 0;
+  var uspTriesLimit = 3;
+  element.async = true;
+  element.type = 'text/javascript';
+  element.src = url;
+
+  firstScript.parentNode.insertBefore(element, firstScript);
+
+  function makeStub() {
+    var TCF_LOCATOR_NAME = '__tcfapiLocator';
+    var queue = [];
+    var win = window;
+    var cmpFrame;
+
+    function addFrame() {
+      var doc = win.document;
+      var otherCMP = !!(win.frames[TCF_LOCATOR_NAME]);
+
+      if (!otherCMP) {
+        if (doc.body) {
+          var iframe = doc.createElement('iframe');
+
+          iframe.style.cssText = 'display:none';
+          iframe.name = TCF_LOCATOR_NAME;
+          doc.body.appendChild(iframe);
+        } else {
+          setTimeout(addFrame, 5);
+        }
+      }
+      return !otherCMP;
+    }
+
+    function tcfAPIHandler() {
+      var gdprApplies;
+      var args = arguments;
+
+      if (!args.length) {
+        return queue;
+      } else if (args[0] === 'setGdprApplies') {
+        if (
+          args.length > 3 &&
+          args[2] === 2 &&
+          typeof args[3] === 'boolean'
+        ) {
+          gdprApplies = args[3];
+          if (typeof args[2] === 'function') {
+            args[2]('set', true);
+          }
+        }
+      } else if (args[0] === 'ping') {
+        var retr = {
+          gdprApplies: gdprApplies,
+          cmpLoaded: false,
+          cmpStatus: 'stub'
+        };
+
+        if (typeof args[2] === 'function') {
+          args[2](retr);
+        }
+      } else {
+        if(args[0] === 'init' && typeof args[3] === 'object') {
+          args[3] = { ...args[3], tag_version: 'V2' };
+        }
+        queue.push(args);
+      }
+    }
+
+    function postMessageEventHandler(event) {
+      var msgIsString = typeof event.data === 'string';
+      var json = {};
+
+      try {
+        if (msgIsString) {
+          json = JSON.parse(event.data);
+        } else {
+          json = event.data;
+        }
+      } catch (ignore) {}
+
+      var payload = json.__tcfapiCall;
+
+      if (payload) {
+        window.__tcfapi(
+          payload.command,
+          payload.version,
+          function(retValue, success) {
+            var returnMsg = {
+              __tcfapiReturn: {
+                returnValue: retValue,
+                success: success,
+                callId: payload.callId
+              }
+            };
+            if (msgIsString) {
+              returnMsg = JSON.stringify(returnMsg);
+            }
+            if (event && event.source && event.source.postMessage) {
+              event.source.postMessage(returnMsg, '*');
+            }
+          },
+          payload.parameter
+        );
+      }
+    }
+
+    while (win) {
+      try {
+        if (win.frames[TCF_LOCATOR_NAME]) {
+          cmpFrame = win;
+          break;
+        }
+      } catch (ignore) {}
+
+      if (win === window.top) {
+        break;
+      }
+      win = win.parent;
+    }
+    if (!cmpFrame) {
+      addFrame();
+      win.__tcfapi = tcfAPIHandler;
+      win.addEventListener('message', postMessageEventHandler, false);
+    }
+  };
+
+  makeStub();
+
+  var uspStubFunction = function() {
+    var arg = arguments;
+    if (typeof window.__uspapi !== uspStubFunction) {
+      setTimeout(function() {
+        if (typeof window.__uspapi !== 'undefined') {
+          window.__uspapi.apply(window.__uspapi, arg);
+        }
+      }, 500);
+    }
+  };
+
+  var checkIfUspIsReady = function() {
+    uspTries++;
+    if (window.__uspapi === uspStubFunction && uspTries < uspTriesLimit) {
+      console.warn('USP is not accessible');
+    } else {
+      clearInterval(uspInterval);
+    }
+  };
+
+  if (typeof window.__uspapi === 'undefined') {
+    window.__uspapi = uspStubFunction;
+    var uspInterval = setInterval(checkIfUspIsReady, 6000);
+  }
+})();
+</script>
+<!-- End Quantcast Choice. Consent Manager Tag v2.0 (for TCF 2.0) -->
+<script type="text/javascript">
+hs.graphicsDir = './command/graphics/';
+hs.outlineType = 'rounded-white';
+hs.wrapperClassName = 'draggable-header';
+</script>
+</head>
+<body>
+<div id="top-menu">
+<table id="menu-table">
+<tr>
+<td class="menu" style="width: 15%;"><a href="./">Server World</a></td>
+<td class="menu">
+<div class="top_navi">
+<ul>
+<li><a href="./note?p=oslist">Other OS Configs</a>
+<ul>
+<li><a href="./note?os=CentOS_Stream_9&amp;p=download">CentOS Stream 9</a></li>
+<li><a href="./note?os=CentOS_Stream_8&amp;p=download">CentOS Stream 8</a></li>
+<li><a href="./note?os=Ubuntu_22.04&amp;p=download">Ubuntu 22.04 LTS</a></li>
+<li><a href="./note?os=Ubuntu_20.04&amp;p=download">Ubuntu 20.04 LTS</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=download">Windows Server 2022</a></li>
+<li><a href="./note?os=Windows_Server_2019&amp;p=download">Windows Server 2019</a></li>
+<li><a href="./note?os=Debian_12&amp;p=download">Debian 12</a></li>
+<li><a href="./note?os=Debian_11&amp;p=download">Debian 11</a></li>
+<li><a href="./note?os=Fedora_39&amp;p=download">Fedora 39</a></li>
+<li><a href="./note?os=AlmaLinux_9&amp;p=download">AlmaLinux 9</a></li>
+<li><a href="./note?os=Rocky_Linux_8&amp;p=download">Rocky Linux 8</a></li>
+<li><a href="./note?os=ESXi_8&amp;p=download">VMware ESXi 8</a></li>
+<li><a href="./note?os=ESXi_7&amp;p=download">VMware ESXi 7</a></li>
+<li><a href="./note?os=FreeBSD_14&amp;p=download">FreeBSD 14</a></li>
+<li><a href="./note?p=command" style="border-bottom: #aaaaaa 0px solid;">Commands Help</a></li>
+</ul>
+<ul style="position: absolute; margin-left: 18em; z-index: 90;">
+<li><a href="./note?os=CentOS_7&amp;p=download">CentOS 7</a></li>
+<li><a href="./note?os=Ubuntu_23.04&amp;p=download">Ubuntu 23.04</a></li>
+<li><a href="./note?os=Ubuntu_21.04&amp;p=download">Ubuntu 21.04</a></li>
+<li><a href="./note?os=Ubuntu_19.04&amp;p=download">Ubuntu 19.04</a></li>
+<li><a href="./note?os=Ubuntu_18.04&amp;p=download">Ubuntu 18.04 LTS</a></li>
+<li><a href="./note?os=Ubuntu_17.04&amp;p=download">Ubuntu 17.04</a></li>
+<li><a href="./note?os=Ubuntu_16.04&amp;p=download">Ubuntu 16.04 LTS</a></li>
+<li><a href="./note?os=Ubuntu_15.04&amp;p=download">Ubuntu 15.04</a></li>
+<li><a href="./note?os=Ubuntu_14.04&amp;p=download">Ubuntu 14.04 LTS</a></li>
+<li><a href="./note?os=Ubuntu_13.04&amp;p=download">Ubuntu 13.04</a></li>
+<li><a href="./note?os=Windows_Server_2016&amp;p=download">Windows 2016</a></li>
+<li><a href="./note?os=Windows_Server_2012&amp;p=download">Windows 2012 R2</a></li>
+<li><a href="./note?os=SUSE_Linux_Enterprise_15&amp;p=download">SUSE Enterprise 15</a></li>
+<li><a href="./note?os=SUSE_Linux_Enterprise_12&amp;p=download">SUSE Enterprise 12</a></li>
+<li><a href="./note?os=SUSE_Linux_Enterprise_Server_11&amp;p=make_media" style="border-bottom: #aaaaaa 0px solid;">SUSE Enterprise 11</a></li>
+</ul>
+<ul style="position: absolute; margin-left: 31em; z-index: 95; width: 120px;">
+<li><a href="./note?os=CentOS_8&amp;p=download">CentOS 8</a></li>
+<li><a href="./note?os=CentOS_6&amp;p=download">CentOS 6</a></li>
+<li><a href="./note?os=CentOS_5&amp;p=make_media">CentOS 5</a></li>
+<li><a href="./note?os=Debian_10&amp;p=download">Debian 10</a></li>
+<li><a href="./note?os=Debian_9&amp;p=download">Debian 9</a></li>
+<li><a href="./note?os=Debian_8&amp;p=download">Debian 8</a></li>
+<li><a href="./note?os=Debian_7.0&amp;p=download">Debian 7</a></li>
+<li><a href="./note?os=Debian_6.0&amp;p=download">Debian 6</a></li>
+<li><a href="./note?os=Fedora_38&amp;p=download">Fedora 38</a></li>
+<li><a href="./note?os=Fedora_37&amp;p=download">Fedora 37</a></li>
+<li><a href="./note?os=Fedora_36&amp;p=download">Fedora 36</a></li>
+<li><a href="./note?os=Fedora_35&amp;p=download">Fedora 35</a></li>
+<li><a href="./note?os=Fedora_34&amp;p=download">Fedora 34</a></li>
+<li><a href="./note?os=Fedora_33&amp;p=download">Fedora 33</a></li>
+<li><a href="./note?os=Fedora_32&amp;p=download" style="border-bottom: #aaaaaa 0px solid;">Fedora 32</a></li>
+</ul>
+<ul style="position: absolute; margin-left: 40em; z-index: 99; width: 120px;">
+<li><a href="./note?os=Fedora_31&amp;p=download">Fedora 31</a></li>
+<li><a href="./note?os=Fedora_30&amp;p=download">Fedora 30</a></li>
+<li><a href="./note?os=Fedora_29&amp;p=download">Fedora 29</a></li>
+<li><a href="./note?os=Fedora_28&amp;p=download">Fedora 28</a></li>
+<li><a href="./note?os=Fedora_27&amp;p=download">Fedora 27</a></li>
+<li><a href="./note?os=Fedora_26&amp;p=download">Fedora 26</a></li>
+<li><a href="./note?os=Fedora_25&amp;p=download">Fedora 25</a></li>
+<li><a href="./note?os=Fedora_24&amp;p=download">Fedora 24</a></li>
+<li><a href="./note?os=Fedora_23&amp;p=download">Fedora 23</a></li>
+<li><a href="./note?os=Fedora_22&amp;p=download">Fedora 22</a></li>
+<li><a href="./note?os=Fedora_21&amp;p=download">Fedora 21</a></li>
+<li><a href="./note?os=Fedora_20&amp;p=download">Fedora 20</a></li>
+<li><a href="./note?os=Fedora_19&amp;p=download">Fedora 19</a></li>
+<li><a href="./note?os=Other">Other Tips</a></li>
+<li style="font-size: 12px;"><a href="./note?p=oslist" style="border-bottom: #aaaaaa 0px solid;">Full OS List</a></li>
+<!-- 
+<li><a href="./note?os=Fedora_18&amp;p=download">Fedora 18</a></li>
+<li><a href="./note?os=Fedora_17&amp;p=download">Fedora 17</a></li>
+<li><a href="./note?os=Fedora_16&amp;p=download">Fedora 16</a></li>
+<li><a href="./note?os=Fedora_15&amp;p=download">Fedora 15</a></li>
+<li><a href="./note?os=Fedora_14&amp;p=download">Fedora 14</a></li>
+<li><a href="./note?os=Fedora_13&amp;p=make_media">Fedora 13</a></li>
+<li><a href="./note?os=Fedora_12&amp;p=make_media">Fedora 12</a></li>
+<li><a href="./note?os=Fedora_10&amp;p=make_media">Fedora 11</a></li>
+<li><a href="./note?os=Fedora_10&amp;p=make_media">Fedora 10</a></li>
+<li><a href="./note?os=Ubuntu_12.04&amp;p=download">Ubuntu 12.04 LTS</a></li>
+<li><a href="./note?os=Ubuntu_11.04&amp;p=download">Ubuntu 11.04</a></li>
+<li><a href="./note?os=Ubuntu_10.04&amp;p=make_media">Ubuntu 10.04 LTS</a></li>
+<li><a href="./note?os=Scientific_Linux_6&amp;p=download" style="border-bottom: #aaaaaa 0px solid;">Scientific Linux 6</a></li>
+-->
+</ul>
+</li>
+</ul>
+</div>
+</td>
+<td class="menu"><a href="./note?p=policy">Privacy Policy</a></td>
+<td class="menu"><a href="./note?p=send">Support/Contact us</a></td>
+<td class="menu" style="width: 15%;">
+<div class="count">1240 / 111330898</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="left">
+<div class="os">Windows 2022</div>
+<div class="navi">
+<ul>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=download">Installation</a>
+<ul style="position: absolute; margin-top: -0.1em;">
+<li><a href="./note?os=Windows_Server_2022&amp;p=download">Get Windows 2022</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=install">Install Windows 2022</a></li>
+</ul>
+</li>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=initial_conf&amp;f=1">Initial Settings</a>
+<ul style="position: absolute; margin-top: -1.9em;">
+<li><a href="./note?os=Windows_Server_2022&amp;p=initial_conf&amp;f=1">(01) Add Local Users</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=initial_conf&amp;f=2">(02) Change Admin User Name</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=initial_conf&amp;f=3">(03) Set Computer Name</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=initial_conf&amp;f=4">(04) Set Static IP address</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=initial_conf&amp;f=5">(05) Windows Update</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=initial_conf&amp;f=6">(06) Allow ICMP Echo Reply</a></li>
+</ul>
+</li>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=ntp&amp;f=1">NTP / SSH Server</a>
+<ul style="position: absolute; margin-top: -3.75em;">
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=ntp&amp;f=1">&nbsp; NTP Server</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=ntp&amp;f=1">(01) Configure NTP Server</a></li>
+<li style="border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=ntp&amp;f=2">(02) Configure NTP Client</a></li>
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=ssh&amp;f=1">&nbsp; SSH Server</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=ssh&amp;f=1">(01) Configure SSH Server</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=ssh&amp;f=2">(02) Configure SSH Client</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=ssh&amp;f=3">(03) SSH Key-Pair Authentication</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=ssh&amp;f=4">(04) Use SSH-Agent</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=ssh&amp;f=5">(05) Change default Shell</a></li>
+</ul>
+</li>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=remotedesktop&amp;f=1">Remote Desktop</a>
+<ul style="position: absolute; margin-top: -5.55em;">
+<li><a href="./note?os=Windows_Server_2022&amp;p=remotedesktop&amp;f=1">(01) Remote Desktop (Server)</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=remotedesktop&amp;f=2">(02) Remote Desktop (Client)</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=remotedesktop&amp;f=3">(03) Install RDS (Session based)</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=remotedesktop&amp;f=4">(04) Configure License Server</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=remotedesktop&amp;f=5">(05) Create Session Collections</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=remotedesktop&amp;f=6">(06) Publish RemoteApps</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=remotedesktop&amp;f=7">(07) Connect to RemoteApps</a></li>
+</ul>
+</li>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=dns&amp;f=1">DNS / DHCP Server</a>
+<ul style="position: absolute; margin-top: -7.4em;">
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=dns&amp;f=1">&nbsp; DNS Server</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=dns&amp;f=1">(01) Install DNS Server</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=dns&amp;f=2">(02) Add Forward lookup Zone</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=dns&amp;f=3">(03) Add Reverse lookup Zone</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=dns&amp;f=4">(04) Add A/PTR record</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=dns&amp;f=5">(05) Verify resolving</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=dns&amp;f=6">(06) Add MX record</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=dns&amp;f=7">(07) Add CNAME record</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=dns&amp;f=8">(08) Configure Secondary Zone</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=dns&amp;f=9">(09) Configure Stub Zone</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=dns&amp;f=10">(10) Set Forwarder</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=dns&amp;f=11">(11) Set Conditional Forwarder</a></li>
+<li style="background: #e6e6fa; border-top: #696969 1px solid; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=dhcp&amp;f=1">&nbsp; DHCP Server</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=dhcp&amp;f=1">(01) Install DHCP Server</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=dhcp&amp;f=2">(02) Configure DHCP Server</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=dhcp&amp;f=3">(03) Configure DHCP Client</a></li>
+</ul>
+</li>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=active_directory&amp;f=1">Active Directory</a>
+<ul style="position: absolute; margin-top: -9.2em;">
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=active_directory&amp;f=1">&nbsp; Active Directory Domain Service</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=active_directory&amp;f=1">(01) Install Active Directory</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=active_directory&amp;f=2">(02) Configure DC</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=active_directory&amp;f=3">(03) Join in Domain from Clients</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=active_directory&amp;f=4">(04) Add User Accounts</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=active_directory&amp;f=5">(05) Add UNIX attributes to Accounts</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=active_directory&amp;f=6">(06) Add Group Accounts</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=active_directory&amp;f=7">(07) Add Organizational Unit</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=active_directory&amp;f=8">(08) Add Computer Accounts (CUI)</a></li>
+</ul>
+</li>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=iscsi&amp;f=1">Storage Server</a>
+<ul style="position: absolute; margin-top: -5.55em;">
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=iscsi&amp;f=1">&nbsp; iSCSI</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iscsi&amp;f=1">(01) Install iSCSI Target</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iscsi&amp;f=2">(02) Configure iSCSI Target</a></li>
+<li style="border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=iscsi&amp;f=3">(03) Configure iSCSI Initiator</a></li>
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=nfs&amp;f=1">&nbsp; NFS</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=nfs&amp;f=1">(01) Install NFS Server</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=nfs&amp;f=2">(02) Conf NFS Shared Folder (Quick)</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=nfs&amp;f=3">(03) Install NFS Client</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=nfs&amp;f=4">(04) Connection from NFS Client</a></li>
+</ul>
+</li>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=hyper-v&amp;f=1">Virtualize / Container</a>
+<ul style="position: absolute; margin-top: -12.8em;">
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=hyper-v&amp;f=1">&nbsp; Hyper-V</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=hyper-v&amp;f=1">(01) Install Hyper-V</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=hyper-v&amp;f=2">(02) Create Virtual Machine (Win)</a></li>
+<li style="border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=hyper-v&amp;f=3">(03) Create Virtual Machine (Linux)</a></li>
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=docker&amp;f=1">&nbsp; Docker</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=docker&amp;f=1">(01) Install Docker</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=docker&amp;f=2">(02) Basic Usage of Docker</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=docker&amp;f=3">(03) Add Container Images</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=docker&amp;f=4">(04) Access to Services on Container</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=docker&amp;f=5">(05) Use Dockerfile</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=docker&amp;f=6">(06) Use External Storage</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=docker&amp;f=7">(07) Use Docker Compose</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=docker&amp;f=8">(08) Docker Network Basis</a></li>
+</ul>
+</li>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=1">Web / FTP Server</a>
+<ul style="position: absolute; margin-top: -14.6em;">
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=1">&nbsp; Web Server (IIS)</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=1">(01) Install IIS</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=2">(02) Use Default Web Site</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=3">(03) Configure Virtual Directory</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=4">(04) Add Web Sites</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=5">(05) SSL/TLS Settings</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=6">(06) Enable HSTS</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=7">(07) Install ASP.NET feature</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=8">(08) Basic Authentication</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=9">(09) WebDAV Setting</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=10">(10) Windows Authentication</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=11">(11) IP and Domain Ristrictions</a></li>
+<li style="border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=12">(12) Use Python Scripts</a></li>
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=ftp&amp;f=1">&nbsp; FTP Server</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=ftp&amp;f=1">(01) Install FTP Server</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=ftp&amp;f=2">(02) Configure Passive Mode</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=ftp&amp;f=3">(03) Add FTP Site</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=ftp&amp;f=4">(04) SSL/TLS Setting</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=ftp&amp;f=5">(05) FTP Client Usage</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=ftp&amp;f=6">(06) FTP User Isolation Setting</a></li>
+</ul>
+</li>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=1">Database</a>
+<ul style="position: absolute; margin-top: -16.5em;">
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=1">&nbsp; SQL Server 2022</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=1">(01) Preparation</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=2">(02) Install SQL Server 2022</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=3">(03) Connect to Database Engine</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=4">(04) Remote connection (Win Auth)</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=5">(05) Remote connection (SQL Auth)</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=6">(06) SQL Server Services</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=7">(07) SQL Server System Databases</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=8">(08) Firewall Settings for SQL Server</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=9">(09) AlwaysOn Availability #1</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=10">(10) AlwaysOn Availability #2</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=11">(11) AlwaysOn Availability #3</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=12">(12) Failover Cluster Instance #1</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=mssql2022&amp;f=13">(13) Failover Cluster Instance #2</a></li>
+</ul>
+</li>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=1">File Server</a>
+<ul style="position: absolute; margin-top: -16.5em;">
+<li><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=1">(01) Install File Server</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=2">(02) Set Network File Sharing</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=3">(03) Set File Sharing (Advanced)</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=4">(04) Access to Sharing Folder</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=5">(05) Configure SMB Multi Channel</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=6">(06) Install Resource Manager</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=7">(07) Set Quotas</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=8">(08) Set auto apply Quotas</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=9">(09) Install DFS NameSpace</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=10">(10) Create DFS NameSpaces</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=11">(11) Set Folders to DFS NameSpace</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=12">(12) Install DFS Replication</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=smb&amp;f=13">(13) Configure DFS Replication</a></li>
+</ul>
+</li>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=exchange&amp;f=1">Mail Server</a>
+<ul style="position: absolute; margin-top: -12.8em;">
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=exchange&amp;f=1">&nbsp; Exchange Server 2019</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=exchange&amp;f=1">(01) Preparation</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=exchange&amp;f=2">(02) Install Exchange Server 2019</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=exchange&amp;f=3">(03) Exchange Admin Center</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=exchange&amp;f=4">(04) Create Mailbox</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=exchange&amp;f=5">(05) Send Email</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=exchange&amp;f=6">(06) Update Certificate</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=exchange&amp;f=7">(07) Enable POP/IMAP Services</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=exchange&amp;f=8">(08) Set Quota for Mailboxes</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=exchange&amp;f=9">(09) Enable In-Place Archives</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=exchange&amp;f=10">(10) Set Retension Policies</a></li>
+</ul>
+</li>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=admin_center&amp;f=1">System Management</a>
+<ul style="position: absolute; margin-top: -14.6em;">
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=backup&amp;f=1">&nbsp; Windows Server Backup</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=backup&amp;f=1">(01) Install Windows Backup</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=backup&amp;f=2">(02) Run Backup Once</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=backup&amp;f=3">(03) Set Scheduled Backup</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=backup&amp;f=4">(04) Recover Files</a></li>
+<li style="border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=backup&amp;f=5">(05) Restoring System</a></li>
+<li style="background: #e6e6fa; border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=admin_center&amp;f=1">&nbsp; Windows Admin Center</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=admin_center&amp;f=1">(01) Install Admin Center</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=admin_center&amp;f=2">(02) Connect to Admin Console</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=admin_center&amp;f=3">(03) Add Target Hosts</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=admin_center&amp;f=4">(04) Overview for Items #1</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=admin_center&amp;f=5">(05) Overview for Items #2</a></li>
+</ul>
+</li>
+<li class="tree"><a href="./note?os=Windows_Server_2022&amp;p=wsfc&amp;f=1">Failover Cluster</a>
+<ul style="position: absolute; margin-top: -7.3em;">
+<li><a href="./note?os=Windows_Server_2022&amp;p=wsfc&amp;f=1">(01) Install WSFC</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=wsfc&amp;f=2">(02) Configure Shared Storage</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=wsfc&amp;f=3">(03) Configure Cluster</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=wsfc&amp;f=7">(04) Add Shared Storage</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=wsfc&amp;f=4">(05) Add Nodes</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=wsfc&amp;f=5">(06) Remove Nodes</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=wsfc&amp;f=6">(07) Clustering outside AD</a></li>
+</ul>
+</li>
+<li id="other"><a href="./note?os=Windows_Server_2022&amp;p=ssl">Others</a>
+<ul style="position: absolute; margin-top: -3.7em;">
+<li><a href="./note?os=Windows_Server_2022&amp;p=python">Install Python</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=wsl">Windows Subsystem for Linux</a></li>
+<li class="tree2"><a href="./note?os=Windows_Server_2022&amp;p=powershell&amp;f=1">PowerShell</a>
+<ul style="position: absolute; margin-top: -0.1em;">
+<li><a href="./note?os=Windows_Server_2022&amp;p=powershell&amp;f=1">(01) Set Profile</a></li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=powershell&amp;f=2">(02) Set Alias</a></li>
+</ul>
+</li>
+<li style="border-bottom: #696969 0px solid;"><a href="./note?os=Windows_Server_2022&amp;p=ssl">Create SSL Certificate (Self Sign)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div style="display: inline-block; width: 100%; font-size: 12px; text-align: center; background-color: #e6e6fa; border-bottom: 1px solid #696969; border-top: 2px solid #e6e6fa;">Sponsored Link</div>
+<div id="bann">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6423793798099903"
+     crossorigin="anonymous"></script>
+<!-- 160x600 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:160px;height:600px"
+     data-ad-client="ca-pub-6423793798099903"
+     data-ad-slot="6315121180"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+</div>
+<div id="contents">
+<br>
+<table style="width: 96%; line-height: 1.5; margin-top: 5px; margin-bottom: 10px; margin-left: auto; margin-right: auto;">
+<tr>
+<td style="width: 100%; height: 28px; color: #ff3399; padding-left: 50px; background: url(./img/icon.gif) #ffffff no-repeat 0 0;">
+<h1 class="subject">IIS : Use Default Web Site<span class="date">2022/01/26</span></h1>
+</td>
+</tr>
+</table>
+<table class="base">
+<tr>
+<td class="num">&nbsp;</td>
+<td>
+<div class="block">
+After installing IIS, a Web Site setting [Default Web Site] is configured.
+</div>
+<div class="block">
+If you use [Default Web Site], refer to follows.
+</div>
+</td>
+</tr>
+<tr>
+<td class="num">[1]</td>
+<td>Run PowerShell with Admin Privilege and Configure.
+</td>
+</tr>
+</table>
+<table class="term">
+<tr>
+<td>
+<pre style="font-family: Consolas, 'Courier New', Courier, Monaco, monospace; letter-spacing: 0;">
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+<span class="color2"># show Sites list : [Default Web Site] is only set</span>
+PS C:\Users\Administrator&gt; <span class="color1">Get-Website </span>
+
+Name             ID   State      Physical Path                  Bindings
+----             --   -----      -------------                  --------
+Default Web Site 1    Started    %SystemDrive%\inetpub\wwwroot  http *:80:
+
+<span class="color2"># [Physical Path] is the Document Root</span>
+PS C:\Users\Administrator&gt; <span class="color1">Get-ChildItem C:\inetpub\wwwroot </span>
+
+    Directory: C:\inetpub\wwwroot
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----         1/24/2022   9:28 PM            703 iisstart.htm
+-a----         1/24/2022   9:28 PM          99710 iisstart.png
+
+<span class="color2"># verify accesses : [iisstart.htm] responds</span>
+PS C:\Users\Administrator&gt; <span class="color1">Invoke-WebRequest localhost </span>
+
+StatusCode        : 200
+StatusDescription : OK
+Content           : &lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+
+.....
+.....
+
+ParsedHtml        : System.__ComObject
+RawContentLength  : 703
+
+<span class="color2"># confirm default documents</span>
+PS C:\Users\Administrator&gt; <span class="color1">Get-WebConfigurationProperty -Filter "//defaultDocument/files/add" -PSPath "IIS:\Sites\Default Web Site" -Name "value" | select value </span>
+
+Value
+-----
+Default.htm
+Default.asp
+index.htm
+index.html
+iisstart.htm
+
+<span class="color2"># create a test page under the Document Root and verify working
+# [Write-Output] generates with UTF-16, so specify encoding explicitly with [Out-File]</span>
+PS C:\Users\Administrator&gt; <span class="color1">Write-Output "IIS Default Start Page" | Out-File C:\inetpub\wwwroot\Default.htm -Encoding Default </span>
+
+<span class="color2"># verify accesses
+# for [curl.exe], specify extension &rArr; if not specify extension, [curl] is an Alias from [Invoke-WebRequest]</span>
+PS C:\Users\Administrator&gt; <span class="color1">curl.exe localhost </span>
+IIS Default Start Page
+</pre>
+</td>
+</tr>
+</table>
+<table style="width: 96%; line-height: 1.5; margin-top: 5px; margin-bottom: 10px; margin-left: auto; margin-right: auto;">
+<tr>
+<td style="width: 100%; height: 28px; color: #ff3399; padding-left: 50px; background: url(./img/icon.gif) #ffffff no-repeat 0 0;">
+<div class="subject">IIS : Use Default Web Site (GUI)</div>
+</td>
+</tr>
+</table>
+<table class="base_win">
+<tr>
+<td class="num">&nbsp;</td>
+<td>
+<div class="block">
+On GUI configuration, set like follows.
+</div>
+</td>
+</tr>
+<tr>
+<td class="num">[2]</td>
+<td>Run [Start] - [Server Manager] and Click [Tools] - [Internet Information Services (IIS) Manager].
+</td>
+</tr>
+</table>
+<table class="base_win">
+<tr>
+<td>
+<img src="./Windows_Server_2022/iis/img/13.png" width="800" height="600" alt="" class="img" style="border: #696969 1px solid; max-width: 800px; width: 100%; height: auto;">
+</td>
+</tr>
+</table>
+<table class="base_win">
+<tr>
+<td class="num">[3]</td>
+<td>Open items on left pabe, [Default Web Site] is configured.
+</td>
+</tr>
+</table>
+<table class="base_win">
+<tr>
+<td>
+<img src="./Windows_Server_2022/iis/img/14.png" width="800" height="600" alt="" class="img" style="border: #696969 1px solid; max-width: 800px; width: 100%; height: auto;">
+</td>
+</tr>
+</table>
+<table class="base_win">
+<tr>
+<td class="num">[4]</td>
+<td>Select [Default Web Site] and Click [Advanced Settings...], then it's possible to confirm settings like [Physical Path] (Document Root) and so on.
+</td>
+</tr>
+</table>
+<table class="base_win">
+<tr>
+<td>
+<img src="./Windows_Server_2022/iis/img/15.png" width="800" height="600" alt="" class="img" style="border: #696969 1px solid; max-width: 800px; width: 100%; height: auto;">
+</td>
+</tr>
+</table>
+<table class="base_win">
+<tr>
+<td class="num">[5]</td>
+<td>Open [Default Document], then it's possible to confirm default documents.
+</td>
+</tr>
+</table>
+<table class="base_win">
+<tr>
+<td>
+<img src="./Windows_Server_2022/iis/img/16.png" width="800" height="600" alt="" class="img" style="border: #696969 1px solid; max-width: 800px; width: 100%; height: auto;">
+</td>
+</tr>
+</table>
+<table class="base_win">
+<tr>
+<td class="num">[6]</td>
+<td>You can see default documents.
+</td>
+</tr>
+</table>
+<table class="base_win">
+<tr>
+<td>
+<img src="./Windows_Server_2022/iis/img/17.png" width="800" height="600" alt="" class="img" style="border: #696969 1px solid; max-width: 800px; width: 100%; height: auto;">
+</td>
+</tr>
+</table>
+<table class="base_win">
+<tr>
+<td class="num">[7]</td>
+<td>Create a test page under the Physical Path (Document Root) and verify accesses with Web browser.
+</td>
+</tr>
+</table>
+<table class="base_win">
+<tr>
+<td>
+<img src="./Windows_Server_2022/iis/img/18.png" width="800" height="600" alt="" class="img" style="border: #696969 1px solid; max-width: 800px; width: 100%; height: auto;">
+</td>
+</tr>
+</table>
+<div style="width: 100%; border-top: 1px #696969 solid; text-align:center; background-color: #e6e6fa; letter-spacing: 10px;">Matched Content</div>
+<div style="width: 100%; border-top: 1px #696969 solid; padding-top: 10px; padding-bottom: 35px; margin-right: 300px; text-align: center;">
+<div id="97138-1" style="margin-bottom: 10px;">
+<script src="//ads.themoneytizer.com/s/gen.js?type=1"></script>
+<script src="//ads.themoneytizer.com/s/requestform.js?siteId=97138&formatId=1"></script>
+</div>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6423793798099903"
+     data-ad-slot="9863218866"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+</div>
+<div id="right">
+<div class="os" style="overflow: hidden;">Windows Server 2022 : IIS</div>
+<div class="navi2">
+<ul>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=1">(01) Install IIS</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=2">(02) Use Default Web Site</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=3">(03) Configure Virtual Directory</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=4">(04) Add Web Sites</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=5">(05) SSL/TLS Settings</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=6">(06) Enable HSTS</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=7">(07) Install ASP.NET feature</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=8">(08) Set Basic Authentication</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=9">(09) WebDAV Setting</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=10">(10) Set Windows Authentication</a></li>
+<li><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=11">(11) IP and Domain Ristrictions</a></li>
+<li style="border-bottom: #696969 1px solid;"><a href="./note?os=Windows_Server_2022&amp;p=iis&amp;f=12">(12) Use Python Scripts</a></li>
+</ul>
+</div>
+<table style="width: 100%; text-align: center; font-size: 12px;">
+<tr>
+<td style="background-color: #e6e6fa; border-bottom: 1px solid #696969;">Sponsored Link</td>
+</tr>
+<tr>
+<td>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6423793798099903"
+     crossorigin="anonymous"></script>
+<!-- 300x600 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:300px;height:600px"
+     data-ad-client="ca-pub-6423793798099903"
+     data-ad-slot="2551543351"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</td>
+</tr>
+</table>
+</div>
+<div id="footer">Copyright &copy; 2007-2024 Server World All Rights Reserved.
+<script type="text/javascript" src="./bin/count.js"></script>
+<img src="../bin/count/count.cgi?1" width="1" height="1" alt="">
+</div>
+</body>
+</html>
